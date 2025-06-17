@@ -1,0 +1,121 @@
+<!-- product.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>STITCHCO - Product Detail</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(145deg, #0d0d0d, #1a1a1a);
+      color: white;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+
+    img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    h1 {
+      color: #d4af37;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #d4af37;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="productDetail">
+    Loading product...
+  </div>
+
+  <script>
+    const products = [
+      {
+        id: 1,
+        name: "Beige Jumper",
+        price: 2000,
+        sizes: ["S", "M", "L", "XL"],
+        image: "biege jumper.jpg"
+      },
+      {
+        id: 2,
+        name: "Beige Sweatpant",
+        price: 1500,
+        sizes: ["S", "M", "L", "XL"],
+        image: "biege sweatpants.jpg"
+      },
+      {
+        id: 3,
+        name: "Grey Jumper",
+        price: 2000,
+        sizes: ["S", "M", "L", "XL"],
+        image: "grey jumper.jpg"
+      },
+      {
+        id: 4,
+        name: "Grey Sweatpant",
+        price: 1500,
+        sizes: ["S", "M", "L", "XL"],
+        image: "grey sweatpants.jpg"
+      }
+    ];
+
+    const params = new URLSearchParams(window.location.search);
+    const productId = parseInt(params.get("id"));
+    const product = products.find(p => p.id === productId);
+
+    const container = document.getElementById("productDetail");
+
+    if (!product) {
+      container.innerHTML = "<p>Product not found.</p>";
+    } else {
+      container.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <h1>${product.name}</h1>
+        <p>Price: PKR ${product.price}</p>
+        <label for="size">Size:</label>
+        <select id="size">
+          ${product.sizes.map(size => `<option value="${size}">${size}</option>`).join("")}
+        </select>
+        <button onclick="addToCart()">Add to Cart</button>
+      `;
+    }
+
+    function addToCart() {
+      const size = document.getElementById("size").value;
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        size: size,
+        quantity: 1
+      });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("Added to cart!");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Checkout - STITCHCO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: #d4af37;
+    }
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    input, textarea, label {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    input, textarea {
+      padding: 10px;
+      background-color: #111;
+      color: white;
+      border: 1px solid #333;
+      border-radius: 6px;
+    }
+    .checkbox {
+      display: flex;
+      align-items: center;
+    }
+    .checkbox input {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+    }
+    button {
+      background-color: #d4af37;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      font-size: 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Checkout</h1>
+  <form id="checkout-form">
+    <label>Full Name:</label>
+    <input type="text" name="name" required />
+
+    <label>Email Address:</label>
+    <input type="email" name="email" required />
+
+    <label>Shipping Address:</label>
+    <textarea name="address" rows="4" required></textarea>
+
+    <div class="checkbox">
+      <input type="checkbox" id="cod" name="cod" required />
+      <label for="cod">Cash on Delivery</label>
+    </div>
+
+    <button type="submit">Place Order</button>
+  </form>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwWlUpuegNxRH8Iai83PuzTsCRUvMd4sQicjDyhYEaqnfTkF4ra0i0V9GaUXF5fnJdo/exec';
+
+    document.getElementById('checkout-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+      if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+      }
+
+      const orderNumber = "ORDER-" + Date.now();
+      formData.append("orderNumber", orderNumber);
+      formData.append("cart", JSON.stringify(cart));
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => {
+        if (res.ok) {
+          localStorage.removeItem("cart");
+          sessionStorage.setItem("lastOrder", JSON.stringify({
+            cart,
+            orderNumber,
+            total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+          }));
+          window.location.href = "order-confirmation.html";
+        } else {
+          alert("There was an error placing your order. Please try again.");
+        }
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        alert("There was an error placing your order.");
+      });
+    });
+  </script>
+
+</body>
+</html>
+

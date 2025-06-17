@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Confirmed - STITCHCO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #d4af37;
+      margin-bottom: 10px;
+    }
+
+    .order-box {
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      text-align: left;
+    }
+
+    .order-item {
+      border-bottom: 1px solid #333;
+      padding: 10px 0;
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .order-total {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #d4af37;
+    }
+
+    .order-number {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
+    .btn {
+      margin-top: 30px;
+      background-color: #d4af37;
+      color: black;
+      padding: 12px 24px;
+      border: none;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Thank You for Your Order!</h1>
+  <div class="order-box" id="order-box">
+    <div class="order-number" id="order-number">Loading order details...</div>
+    <div id="order-items"></div>
+    <div class="order-total" id="order-total"></div>
+  </div>
+
+  <button class="btn" onclick="window.location.href='index.html'">Back to Home</button>
+
+  <script>
+    const lastOrder = JSON.parse(sessionStorage.getItem("lastOrder"));
+
+    if (lastOrder) {
+      document.getElementById("order-number").innerText = "Order Number: " + lastOrder.orderNumber;
+
+      const itemsContainer = document.getElementById("order-items");
+      lastOrder.cart.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "order-item";
+        div.innerHTML = `
+          <strong>${item.name}</strong><br>
+          Size: ${item.size} <br>
+          Quantity: ${item.quantity} <br>
+          Price: PKR ${item.price * item.quantity}
+        `;
+        itemsContainer.appendChild(div);
+      });
+
+      document.getElementById("order-total").innerText = "Total: PKR " + lastOrder.total;
+    } else {
+      document.getElementById("order-box").innerHTML = "<p>No order data found.</p>";
+    }
+  </script>
+
+</body>
+</html>

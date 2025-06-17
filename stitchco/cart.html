@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart - STITCHCO</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #d4af37;
+    }
+
+    .cart-items {
+      max-width: 700px;
+      margin: 30px auto;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #444;
+    }
+
+    .item p {
+      margin: 0;
+    }
+
+    .remove-btn {
+      background: crimson;
+      border: none;
+      color: #fff;
+      padding: 6px 10px;
+      margin-left: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .remove-btn:hover {
+      background: darkred;
+    }
+
+    .buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .buttons a {
+      display: inline-block;
+      padding: 12px 20px;
+      margin: 10px;
+      background: #d4af37;
+      color: #000;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .buttons a:hover {
+      background-color: gold;
+    }
+
+    .total {
+      text-align: right;
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 18px;
+      color: gold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Your Cart</h2>
+
+  <div class="cart-items" id="cartItems">
+    <!-- Items will appear here -->
+  </div>
+
+  <div class="total" id="totalCost"></div>
+
+  <div class="buttons">
+    <a href="products.html">Continue Shopping</a>
+    <a href="checkout.html">Checkout</a>
+  </div>
+
+  <script>
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartItemsContainer = document.getElementById('cartItems');
+      const totalCost = document.getElementById('totalCost');
+
+      cartItemsContainer.innerHTML = '';
+      let total = 0;
+
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = "<p style='text-align:center;'>Your cart is empty.</p>";
+        totalCost.innerText = "";
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const div = document.createElement('div');
+        div.className = "item";
+        div.innerHTML = `
+          <div>
+            <p>${item.name} (x${item.quantity})</p>
+            <p>Rs. ${itemTotal}</p>
+          </div>
+          <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+        `;
+        cartItemsContainer.appendChild(div);
+      });
+
+      totalCost.textContent = `Total: Rs. ${total}`;
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.splice(index, 1); // remove 1 item at the given index
+      localStorage.setItem('cart', JSON.stringify(cart));
+      loadCart(); // re-render cart
+    }
+
+    loadCart();
+  </script>
+</body>
+</html>
